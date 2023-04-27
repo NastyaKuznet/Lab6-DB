@@ -11,7 +11,7 @@ namespace Lab6DB.ViewModel
     {
         
         private string name;
-        private ObservableCollection<string> elementsComboBoxTypeColumn = new ObservableCollection<string>() { "Int", "String", "Data" };
+        private ObservableCollection<string> elementsComboBoxTypeColumn = new ObservableCollection<string>() { "int", "string", "dateTime" };
         private string selectedElementComboBoxType = "";
 
         public string Name

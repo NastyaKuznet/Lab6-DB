@@ -63,7 +63,6 @@ namespace Lab6DB.Model
                 {
                     string contentJsonFile = File.ReadAllText(name);
                     PatternObjectDB pattern = JsonSerializer.Deserialize<PatternObjectDB>(contentJsonFile);
-                    //PatternObjectDB pattern = new PatternObjectDB(name);
                     _patterns[pattern.Name] = pattern;
                 }
                 patterns = _patterns;

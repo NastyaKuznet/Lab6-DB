@@ -20,7 +20,6 @@ namespace Lab6DB.ViewModel
     {
 
         private LoaderFiles Model;
-        private ViewModelCreateWindow vmCreateWindow;
 
 
         private ObservableCollection<BaseItem> treeElement = new ObservableCollection<BaseItem>();
@@ -184,7 +183,7 @@ namespace Lab6DB.ViewModel
                         folder = dialog.SelectedPath;
                     }
                     File.Create(folder + "\\ok.txt");//CreateDirectory для папок
-                    vmCreateWindow = new ViewModelCreateWindow();
+                    ViewModelCreateWindow vmCreateWindow = new ViewModelCreateWindow();
                     CreateWindow createWindow = new CreateWindow();
                     createWindow.DataContext = vmCreateWindow;
                     vmCreateWindow.FullFolderPath = folder;
@@ -192,5 +191,40 @@ namespace Lab6DB.ViewModel
                 });
             }
         }
+        public ICommand Clear
+        {
+            get
+            {
+                return new CommandDelegate(parameter =>
+                {
+                    TreeElement.Clear();
+                    CollectionTableElement.Clear();
+                    ComboBoxElement.Clear();
+                    TableElement = new DataTable();
+                });
+            }
+        }
+        public ICommand RewriteTable
+        {
+            get
+            {
+                return new CommandDelegate(parameter =>
+                {
+                    string namePattern = ComboBoxSelectItem;
+                    foreach (DataTable table in CollectionTableElement)
+                    {
+                        if (table.TableName.Contains(namePattern))
+                        {
+                            ViewModelRewriteTableWindow vmRewriteTable = new ViewModelRewriteTableWindow();
+                            RewriteTableWindow rewriteTableWindow = new RewriteTableWindow();
+                            rewriteTableWindow.DataContext = vmRewriteTable;
+
+                            rewriteTableWindow.Show();
+                        }
+                    }
+                });
+            }
+        }
+
     }
 }

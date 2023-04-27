@@ -10,12 +10,18 @@
     <Compile Update="CreateWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="RewriteTableWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="CreateWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="MainWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="RewriteTableWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>

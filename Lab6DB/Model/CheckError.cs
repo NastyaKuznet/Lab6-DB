@@ -31,14 +31,26 @@ namespace Lab6DB.Model
                 return $"Ошибка количества столбцов в файле {nameFile.Substring(nameFile.LastIndexOf('\\') + 1)}.";
             return NotError;
         }
+        public static string InputErrorInt(string num)
+        {
+            if (!int.TryParse(num, out int number))
+                return "Введенное значение должно быть типа int.";
+            return NotError;
+        }
+        public static string ErrorEmptyString(string str)
+        {
+            if (String.IsNullOrEmpty(str))
+                return "Нужно заполнить все поля.";
+            return NotError;
+        }
 
-        private static string InputErrorInt(string num, string nameColumn)
+        private static string InputErrorIntInColumn(string num, string nameColumn)
         {
             if (!int.TryParse(num, out int number))
                 return $"Ошибка типа данных в столбце {nameColumn}.";
             return NotError;
         }
-        private static string InputErrorDateTime(string num, string nameColumn)
+        private static string InputErrorDateTimeInColumn(string num, string nameColumn)
         {
             if (!DateTime.TryParse(num, out DateTime dateTime))
                 return $"Ошибка типа данных в столбце {nameColumn}.";
@@ -52,11 +64,16 @@ namespace Lab6DB.Model
             {
                 switch (prop.Type)
                 {
-                    case PatternPropertyDB.PropertyType.Int:
-                        state = InputErrorInt(line[i], prop.Name);
+                    case "int":
+                        state = InputErrorIntInColumn(line[i], prop.Name);
                         break;
-                    case PatternPropertyDB.PropertyType.DataTime:
-                        state = InputErrorDateTime(line[i], prop.Name);
+                    case "datetime":
+                        state = InputErrorDateTimeInColumn(line[i], prop.Name);
+                        break;
+                    case "string":
+                        break;
+                    default:
+                        state = "Не известный тип данных.";
                         break;
                 }
                 if (!state.Contains(NotError))
