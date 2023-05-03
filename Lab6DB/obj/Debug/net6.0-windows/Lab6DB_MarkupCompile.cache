@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET6_0;NETCOREAPP
 C:\Users\user\source\repos\Lab6DB\Lab6DB\App.xaml
-2-91284444
+4-528232214
 
-16-280132140
+23-1180733314
 2031577854355
-CreateWindow.xaml;MainWindow.xaml;
+CreateWindow.xaml;MainWindow.xaml;RewriteDataWindow.xaml;RewriteTableWindow.xaml;
 
 False
 

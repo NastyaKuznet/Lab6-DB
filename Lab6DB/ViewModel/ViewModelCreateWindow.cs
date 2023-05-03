@@ -9,18 +9,24 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Text.Json;
+using System.IO;
+using Lab6DB.Model.PrimaryData;
 
 namespace Lab6DB.ViewModel
 {
     public class ViewModelCreateWindow: MyViewModel
     {
+        public CreateWindow CreateWindow { get; set; }
 
         private string fullFolderPath = "";
         private string nameTable;
         private string numberColumns;
         private ObservableCollection<ItemTextBox> columns = new ObservableCollection<ItemTextBox>();
-        private ObservableCollection<string> elementsComboBoxTypeColumn = new ObservableCollection<string>() {"Int","String","Date"};
+        private ObservableCollection<string> elementsComboBoxTypeColumn = new ObservableCollection<string>() {"Int","String","DateTime"};
+        private string state = "";
 
+        public PatternObjectDB NewPattern = new PatternObjectDB();
 
         public string FullFolderPath
         {
@@ -68,6 +74,15 @@ namespace Lab6DB.ViewModel
                 OnPropertyChanged(nameof(ElementsComboBoxTypeColumn));
             }
         }
+        public string State
+        {
+            get { return state; }
+            set
+            {
+                state = value;
+                OnPropertyChanged(nameof(State));
+            }
+        }
 
         public ICommand CreateTextBoxes
         {
@@ -75,11 +90,18 @@ namespace Lab6DB.ViewModel
             {
                 return new CommandDelegate(parametr =>
                 {
-                    //проверка что колличество столбов введенно int
-                    int numberColumn = int.Parse(NumberColumns);
-                    for(int i = 0; i < numberColumn; i++)
+                    State = CheckError.ErrorEmptyString(NumberColumns);
+                    if (State.Contains(CheckError.NotError))
                     {
-                        Columns.Add(new ItemTextBox(""));
+                        State = CheckError.InputErrorInt(NumberColumns);
+                        if (State.Contains(CheckError.NotError))
+                        {
+                            int numberColumn = int.Parse(NumberColumns);
+                            for (int i = 0; i < numberColumn; i++)
+                            {
+                                Columns.Add(new ItemTextBox(""));
+                            }
+                        }
                     }
                 });
             }
@@ -91,30 +113,32 @@ namespace Lab6DB.ViewModel
             {
                 return new CommandDelegate(parametr => 
                 {
-                    DataTable newTable = new DataTable(NameTable);
-                    Dictionary<string, PatternPropertyDB> props = new Dictionary<string, PatternPropertyDB>();
-
-                    foreach (ItemTextBox contentColumn in Columns)
+                    State = CheckError.ErrorEmptyString(NameTable);
+                    if (State.Contains(CheckError.NotError))
                     {
-                        DataColumn column = new DataColumn(contentColumn.Name);
-                        props[contentColumn.Name] = new PatternPropertyDB(contentColumn.Name, SelectType(contentColumn.SelectedElementComboBoxType));
-                        newTable.Columns.Add(column);
+                        DataTable newTable = new DataTable(NameTable);
+                        Dictionary<string, PatternPropertyDB> props = new Dictionary<string, PatternPropertyDB>();
+                        foreach (ItemTextBox contentColumn in Columns)
+                        {
+                            State = CheckError.ErrorEmptyString(contentColumn.Name);
+                            if (State.Contains(CheckError.NotError))
+                            {
+                                DataColumn column = new DataColumn(contentColumn.Name);
+                                props[contentColumn.Name] = new PatternPropertyDB(contentColumn.Name, contentColumn.SelectedElementComboBoxType);
+                                newTable.Columns.Add(column);
+                            }
+                            else { break; }
+                        }
+                        if (State.Contains(CheckError.NotError))
+                        {
+                            NewPattern = new PatternObjectDB(NameTable, props);//а надо ли в виде свойства?
+                            string json = JsonSerializer.Serialize(NewPattern);
+                            File.WriteAllText($"{FullFolderPath}\\{NameTable}.json", json);
+                            //State = $"Таблица <{NameTable}> сохранена!";
+                        }
                     }
-                    PatternObjectDB newPattern = new PatternObjectDB(NameTable, props);
+                    CreateWindow.Close();
                 });
-            }
-        }
-
-        private PatternPropertyDB.PropertyType SelectType(string type)
-        {
-            switch(type)
-            {
-                case ("Int"):
-                    return PatternPropertyDB.PropertyType.Int;
-                case ("String"):
-                    return PatternPropertyDB.PropertyType.String;
-                default:
-                    return PatternPropertyDB.PropertyType.DataTime;
             }
         }
 

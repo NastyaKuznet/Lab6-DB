@@ -1,5 +1,4 @@
-﻿using Lab6DB.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -11,19 +10,21 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Xml.Linq;
 using System.Text.Json;
+using Lab6DB.Model.PrimaryData;
+using Lab6DB.Model.AdditionalData;
 
 namespace Lab6DB.Model
 {
     public class LoaderFiles
     {
-        public string State;
+        public string State = CheckError.NotError;
 
-        private Dictionary<string, PatternObjectDB> patterns = new Dictionary<string, PatternObjectDB>();
+        private Dictionary<string, AdditionalDataPattern> patterns = new Dictionary<string, AdditionalDataPattern>();
 
-        public Dictionary<string, PatternObjectDB> Patterns { get { return patterns; } }
+        public Dictionary<string, AdditionalDataPattern> Patterns { get { return patterns; } }
 
-        private Dictionary<string, ObjectDB[]> objects = new Dictionary<string, ObjectDB[]>();
-        public Dictionary<string, ObjectDB[]> Objects { get { return objects; } }
+        private Dictionary<string, AdditionalDataObject> objects = new Dictionary<string, AdditionalDataObject>();
+        public Dictionary<string, AdditionalDataObject> Objects { get { return objects; } }
 
 
         public LoaderFiles(string nameFolder)
@@ -47,7 +48,7 @@ namespace Lab6DB.Model
                 }
 
                 СreatePatterns(nameFilesPatterns);
-                if (State.Contains(CheckError.NotError))
+                if (State.CompareTo(CheckError.NotError) == 0)
                     ConnectTemplateObjectAndCreate(nameFilesObjects);
             }
         }
@@ -55,16 +56,15 @@ namespace Lab6DB.Model
         private void СreatePatterns(List<string> nameFilesPatterns)
         {
             State = CheckError.IsNotHavePatterns(nameFilesPatterns);
-            if (State.Contains(CheckError.NotError))
+            if (State.CompareTo(CheckError.NotError) == 0)
             {
-                Dictionary<string, PatternObjectDB> _patterns = new Dictionary<string, PatternObjectDB>();
+                Dictionary<string, AdditionalDataPattern> _patterns = new Dictionary<string, AdditionalDataPattern>();
 
                 foreach (string name in nameFilesPatterns)
                 {
                     string contentJsonFile = File.ReadAllText(name);
                     PatternObjectDB pattern = JsonSerializer.Deserialize<PatternObjectDB>(contentJsonFile);
-                    //PatternObjectDB pattern = new PatternObjectDB(name);
-                    _patterns[pattern.Name] = pattern;
+                    _patterns[pattern.Name] = new AdditionalDataPattern(name, pattern);
                 }
                 patterns = _patterns;
             }
@@ -73,9 +73,9 @@ namespace Lab6DB.Model
         private void ConnectTemplateObjectAndCreate(List<string> nameFilesObjects)
         {
             State = CheckError.IsNotHaveObjects(nameFilesObjects);
-            if (State.Contains(CheckError.NotError))
+            if (State.CompareTo(CheckError.NotError) == 0)
             {
-                Dictionary<string, ObjectDB[]> _objects = new Dictionary<string, ObjectDB[]>();
+                Dictionary<string, AdditionalDataObject> _objects = new Dictionary<string, AdditionalDataObject>();
 
                 foreach (string name in nameFilesObjects)
                 {
@@ -83,13 +83,14 @@ namespace Lab6DB.Model
                     string correctName = name.Substring(lastSymbol, name.LastIndexOf('.') - lastSymbol);
                     if (patterns.ContainsKey(correctName))
                     {
-                        ObjectDB[] objectD = LoaderData.ReadObjectDB(name, patterns[correctName]);
+                        AdditionalDataObject addObjectDB = LoaderData.ReadObjectDB(name, patterns[correctName].Pattern);
+
                         State = LoaderData.State;
-                        if (!State.Contains(CheckError.NotError))
+                        if (State.CompareTo(CheckError.NotError) != 0)
                         {
                             break;
                         }
-                        _objects[correctName] = objectD;
+                        _objects[correctName] = addObjectDB;
                     }
                     else
                     {

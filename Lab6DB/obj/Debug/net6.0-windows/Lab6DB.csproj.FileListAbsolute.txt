@@ -22,3 +22,7 @@ C:\Users\user\source\repos\Lab6DB\Lab6DB\obj\Debug\net6.0-windows\Lab6DB.genrunt
 C:\Users\user\source\repos\Lab6DB\Lab6DB\obj\Debug\net6.0-windows\ref\Lab6DB.dll
 C:\Users\user\source\repos\Lab6DB\Lab6DB\obj\Debug\net6.0-windows\CreateWindow.g.cs
 C:\Users\user\source\repos\Lab6DB\Lab6DB\obj\Debug\net6.0-windows\CreateWindow.baml
+C:\Users\user\source\repos\Lab6DB\Lab6DB\obj\Debug\net6.0-windows\RewriteTableWindow.g.cs
+C:\Users\user\source\repos\Lab6DB\Lab6DB\obj\Debug\net6.0-windows\RewriteTableWindow.baml
+C:\Users\user\source\repos\Lab6DB\Lab6DB\obj\Debug\net6.0-windows\RewriteDataWindow.g.cs
+C:\Users\user\source\repos\Lab6DB\Lab6DB\obj\Debug\net6.0-windows\RewriteDataWindow.baml
