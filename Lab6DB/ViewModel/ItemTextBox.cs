@@ -37,6 +37,10 @@ namespace Lab6DB.ViewModel
         {
             Name = _name;
         }
-
+        public ItemTextBox(string _name, string type)
+        {
+            Name = _name;
+            SelectedElementComboBoxType = type;
+        }
     }
 }

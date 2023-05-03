@@ -5,15 +5,17 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Lab6DB.Model;
+using Lab6DB.Model.AdditionalData;
+using Lab6DB.Model.PrimaryData;
 
 namespace Lab6DB.Model
 {
     public static class LoaderData
     {
-        public static string State { get; private set; }
-        public static ObjectDB[] ReadObjectDB(string nameFile, PatternObjectDB patternObjectDB)
+        public static string State = CheckError.NotError;
+        public static AdditionalDataObject ReadObjectDB(string nameFile, PatternObjectDB patternObjectDB)
         {
+            AdditionalDataObject additionalDataObject = new AdditionalDataObject();
             string[] data = File.ReadAllLines(nameFile);
             ObjectDB[] objectDBs = new ObjectDB[data.Length];
 
@@ -21,19 +23,21 @@ namespace Lab6DB.Model
             {
                 string[] line = data[i].Split(';');
                 State = CheckError.InputErrorRightCountColumns(line, patternObjectDB.Properties.Count, nameFile);
-                if (State.Contains(CheckError.NotError))
+                if (State.CompareTo(CheckError.NotError) == 0)
                 {
                     State = CheckError.InputErrorProperties(line, patternObjectDB);
-                    if (State.Contains(CheckError.NotError))
+                    if (State.CompareTo(CheckError.NotError) == 0)
                         objectDBs[i] = new ObjectDB(patternObjectDB, line);
                     else
-                        return objectDBs;
+                        return additionalDataObject;
 
                 }
                 else
-                    return objectDBs;
+                    return additionalDataObject;
             }
-            return objectDBs;
+            additionalDataObject.WayCSV = nameFile;
+            additionalDataObject.DBObject = objectDBs;
+            return additionalDataObject;
         }
     }
 }

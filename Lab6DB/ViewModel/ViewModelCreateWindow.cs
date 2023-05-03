@@ -11,11 +11,13 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Text.Json;
 using System.IO;
+using Lab6DB.Model.PrimaryData;
 
 namespace Lab6DB.ViewModel
 {
     public class ViewModelCreateWindow: MyViewModel
     {
+        public CreateWindow CreateWindow { get; set; }
 
         private string fullFolderPath = "";
         private string nameTable;
@@ -132,9 +134,10 @@ namespace Lab6DB.ViewModel
                             NewPattern = new PatternObjectDB(NameTable, props);//а надо ли в виде свойства?
                             string json = JsonSerializer.Serialize(NewPattern);
                             File.WriteAllText($"{FullFolderPath}\\{NameTable}.json", json);
-                            State = $"Таблица <{NameTable}> сохранена!";
+                            //State = $"Таблица <{NameTable}> сохранена!";
                         }
                     }
+                    CreateWindow.Close();
                 });
             }
         }

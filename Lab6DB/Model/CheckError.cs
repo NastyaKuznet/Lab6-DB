@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Lab6DB.Model;
+using Lab6DB.Model.PrimaryData;
 
 namespace Lab6DB.Model
 {
@@ -71,6 +71,7 @@ namespace Lab6DB.Model
                         state = InputErrorDateTimeInColumn(line[i], prop.Name);
                         break;
                     case "string":
+                        state = NotError;
                         break;
                     default:
                         state = "Не известный тип данных.";

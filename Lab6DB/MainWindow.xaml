@@ -14,7 +14,7 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="20"/>
             <RowDefinition/>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="70"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -25,6 +25,7 @@
             <MenuItem Header="Создать" MinHeight="30" Command="{Binding CreateDB}"/>
             <MenuItem Header="Открыть" MinHeight="30" Command="{Binding AddFiles}"/>
             <MenuItem Header="Очистить" MinHeight="30" Command="{Binding Clear}"/>
+            <MenuItem Header="Обновить" MinHeight="30" Command="{Binding Update}"/>
         </Menu>
         <TreeView Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" ItemsSource="{Binding TreeElement}">
             <TreeView.ItemTemplate>
@@ -34,12 +35,14 @@
             </TreeView.ItemTemplate>
         </TreeView>
         <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding ComboBoxElement}" SelectedItem="{Binding ComboBoxSelectItem}"/>
-        <Menu Grid.Row="1" Grid.Column="2" Grid.RowSpan="2">
-            <MenuItem Header="Выбрать" Command="{Binding CreateTable}"/>
+        <Menu Grid.Row="1" Grid.RowSpan="3" Grid.Column="2" >
+            <MenuItem Header="Вывести таблицу" Command="{Binding OutputTable}"/>
             <MenuItem Header="Редактировать таблицу" Command="{Binding RewriteTable}"/>
-            <MenuItem Header="Редактировать данные"/>
+            <MenuItem Header="Редактировать данные" Command="{Binding RewriteData}"/>
         </Menu>
-        <DataGrid Grid.Row="2" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="1" ItemsSource="{Binding TableElement}"/>
-        <TextBlock Grid.Row="3" Grid.Column="0" Text="{Binding ContentErrorWindow}"/>
+        <DataGrid Grid.Row="2" Grid.RowSpan="2" Grid.Column="1" Grid.ColumnSpan="1" ItemsSource="{Binding TableElement}" IsReadOnly="False"/>
+        <GroupBox Grid.Row="3" Grid.Column="0" Header="Окно ошибок">
+            <Label Content="{Binding ContentErrorWindow}"/>
+        </GroupBox>
     </Grid>
 </Window>

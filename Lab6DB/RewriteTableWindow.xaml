@@ -6,28 +6,30 @@
         xmlns:local="clr-namespace:Lab6DB"
         mc:Ignorable="d"
         Title="RewriteTableWindow" Height="450" Width="800">
-    <Grid Margin="30">
+    <Grid Margin="20">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100"/>
             <ColumnDefinition Width="100"/>
             <ColumnDefinition Width="70"/>
             <ColumnDefinition/>
             <ColumnDefinition Width="70"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition/>
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
-        <TextBox Grid.Column="0" Grid.Row="0" Text="{Binding NameTable, FallbackValue='Имя таблицы'}"/>
-        <GroupBox Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="2" Header="Окно ошибок">
-            <TextBlock Text="{Binding State}"/>
+        <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Text="Имя таблицы"/>
+        <TextBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding NameTable}"/>
+        <Button Grid.Column="2" Grid.Row="1" Content="Сохранить" Command="{Binding RewriteNameTable}"/>
+        <GroupBox Grid.Column="4" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="3" Header="Окно ошибок">
+            <TextBlock Text="{Binding ContentErrorWindow}"/>
         </GroupBox>
-        <TextBox Grid.Column="0" Grid.Row="2" Text="{Binding NumberColumns, UpdateSourceTrigger=PropertyChanged}"/>
-        <Button Grid.Column="1" Grid.Row="2" Content="Применить" Command="{Binding CreateTextBoxes}"/>
-        <ScrollViewer Margin="0 20 0 0" Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="3" VerticalScrollBarVisibility="Visible">
+        <ScrollViewer Margin="0 20 0 0" Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="4" VerticalScrollBarVisibility="Visible">
             <StackPanel>
                 <ItemsControl ItemsSource="{Binding Columns}">
                     <ItemsControl.ItemTemplate>
@@ -46,6 +48,10 @@
                 </ItemsControl>
             </StackPanel>
         </ScrollViewer>
-        <Button Grid.Column="4" Grid.Row="4" Content="Сохранить" Command="{Binding Save}"/>
+        <TextBox Grid.Column="0" Grid.Row="5" Text="{Binding NumberColumns}"/>
+        <Button Grid.Column="1" Grid.Row="5" Content="Добавить" Command="{Binding AddColumn}"/>
+        <ComboBox Grid.Column="2" Grid.Row="5" ItemsSource="{Binding NameColumns}" SelectedItem="{Binding SelectedColumn}"/>
+        <Button Grid.Column="3" Grid.Row="5" Content="Удалить" Command="{Binding DeleteColumn}"/>
+        <Button Grid.Column="5" Grid.Row="5" Content="Сохранить" Command="{Binding RewriteColumnTable}"/>
     </Grid>
 </Window>
