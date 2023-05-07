@@ -11,7 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Text.Json;
 using System.IO;
-using Lab6DB.Model.PrimaryData;
+using Core0;
 
 namespace Lab6DB.ViewModel
 {

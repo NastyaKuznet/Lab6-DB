@@ -1,5 +1,4 @@
 ﻿using Lab6DB.Model;
-using Lab6DB.Model.AdditionalData;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Core0;
 
 namespace Lab6DB.ViewModel
 {
@@ -72,6 +72,7 @@ namespace Lab6DB.ViewModel
                     Element.Table = SelectedTable;
                     CollectDelete = RewriteCollectionDelete(Element);
                     CreateCSV();
+                    
                 });
             }
         }
@@ -109,6 +110,7 @@ namespace Lab6DB.ViewModel
                 }
                 else
                     File.WriteAllLines(Element.WayCSV, lines);
+                ContentErrorWindow = "Сохранено.";
             }
         }
 

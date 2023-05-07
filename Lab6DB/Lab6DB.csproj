@@ -8,4 +8,8 @@
     <UseWindowsForms>True</UseWindowsForms>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Core0\Core0.csproj" />
+  </ItemGroup>
+
 </Project>

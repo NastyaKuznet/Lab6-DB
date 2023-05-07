@@ -7,14 +7,27 @@
   "targets": {
     ".NETCoreApp,Version=v6.0": {
       "Lab6DB/1.0.0": {
+        "dependencies": {
+          "Core0": "1.0.0"
+        },
         "runtime": {
           "Lab6DB.dll": {}
+        }
+      },
+      "Core0/1.0.0": {
+        "runtime": {
+          "Core0.dll": {}
         }
       }
     }
   },
   "libraries": {
     "Lab6DB/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Core0/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

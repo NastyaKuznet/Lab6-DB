@@ -1,5 +1,4 @@
-﻿using Lab6DB.Model.AdditionalData;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -9,7 +8,7 @@ using System.Windows.Input;
 using System.Text.Json;
 using System.IO;
 using System.Collections.ObjectModel;
-using Lab6DB.Model.PrimaryData;
+using Core0;
 using Lab6DB.Model;
 using static System.Windows.Forms.AxHost;
 
@@ -19,10 +18,10 @@ namespace Lab6DB.ViewModel
     {   
         private string nameTable;
         private ObservableCollection<ItemTextBox> columns = new ObservableCollection<ItemTextBox>();
-        private string numberColumns;
-        private ObservableCollection<string> nameColumns;
-        private string selectedColumn;
-        private string сontentErrorWindow;
+        private string numberColumns = "";
+        private ObservableCollection<string> nameColumns = new ObservableCollection<string>();
+        private string selectedColumn = "";
+        private string сontentErrorWindow = CheckError.NotError;
 
 
         public ElementDB Element { get; set; }
@@ -153,6 +152,7 @@ namespace Lab6DB.ViewModel
                         
                         string upJson = JsonSerializer.Serialize(Element.Pattern);
                         File.WriteAllText(Element.WayJson, upJson);
+                        ContentErrorWindow = "Сохранено.";
                     }
                 });
             }
