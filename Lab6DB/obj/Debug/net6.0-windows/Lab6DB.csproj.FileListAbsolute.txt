@@ -26,3 +26,9 @@ C:\Users\user\source\repos\Lab6DB\Lab6DB\obj\Debug\net6.0-windows\RewriteTableWi
 C:\Users\user\source\repos\Lab6DB\Lab6DB\obj\Debug\net6.0-windows\RewriteTableWindow.baml
 C:\Users\user\source\repos\Lab6DB\Lab6DB\obj\Debug\net6.0-windows\RewriteDataWindow.g.cs
 C:\Users\user\source\repos\Lab6DB\Lab6DB\obj\Debug\net6.0-windows\RewriteDataWindow.baml
+C:\Users\user\source\repos\Lab6DB\Lab6DB\bin\Debug\net6.0-windows\Core0.deps.json
+C:\Users\user\source\repos\Lab6DB\Lab6DB\bin\Debug\net6.0-windows\Core0.runtimeconfig.json
+C:\Users\user\source\repos\Lab6DB\Lab6DB\bin\Debug\net6.0-windows\Core0.exe
+C:\Users\user\source\repos\Lab6DB\Lab6DB\bin\Debug\net6.0-windows\Core0.dll
+C:\Users\user\source\repos\Lab6DB\Lab6DB\bin\Debug\net6.0-windows\Core0.pdb
+C:\Users\user\source\repos\Lab6DB\Lab6DB\obj\Debug\net6.0-windows\Lab6DB.csproj.CopyComplete

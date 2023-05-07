@@ -13,8 +13,7 @@ using System.Reflection.Metadata;
 using static System.Windows.Forms.AxHost;
 using System.IO;
 using System.Xml.Schema;
-using Lab6DB.Model.PrimaryData;
-using Lab6DB.Model.AdditionalData;
+using Core0;
 
 namespace Lab6DB.ViewModel
 {
@@ -187,13 +186,15 @@ namespace Lab6DB.ViewModel
             {
                 return new CommandDelegate(parameter =>
                 {
+                    TableElement = new DataTable();
                     for(int i = 0; i < ElementDBs.Count; i++ )
                     {
-                        if (ElementDBs[i].Table.TableName.CompareTo(ComboBoxSelectItem) == 0)
+                        if (ElementDBs[i].Table.TableName.CompareTo(ComboBoxSelectItem) == 0 && vmRewriteTable.Element != null)
                         {
                             ElementDBs[i].Table = vmRewriteTable.Element.Table;
                             TreeElement[i] = RewriteBaseItem(ElementDBs[i].Table);
                             ComboBoxElement[i] = ElementDBs[i].Table.TableName;
+                            CollectionTableElement[i] = vmRewriteTable.Element.Table;
                         }
                     }
                 });
@@ -244,7 +245,7 @@ namespace Lab6DB.ViewModel
                     {
                         folder = dialog.SelectedPath;
                     }
-                    File.Create(folder + "\\ok.txt");//CreateDirectory для папок
+                    //File.Create(folder + "\\ok.txt");//CreateDirectory для папок
                     ViewModelCreateWindow vmCreateWindow = new ViewModelCreateWindow();
                     CreateWindow createWindow = new CreateWindow();
                     createWindow.DataContext = vmCreateWindow;
