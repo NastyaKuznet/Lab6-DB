@@ -113,13 +113,13 @@ namespace Lab6DB.ViewModel
                     {
                         folder = dialog.SelectedPath;
                     }
+
                     Model = new LoaderFiles(folder);
-                    if(Model.State != null)
-                    { 
-                        ContentErrorWindow = Model.State;
-                        if (ContentErrorWindow.CompareTo(CheckError.NotError) == 0)
-                            CreateViewModel();
-                    }
+                    ContentErrorWindow = Model.State;
+
+                    if (ContentErrorWindow.CompareTo(CheckError.NotError) == 0)
+                        CreateViewModel();
+
                 });
 
             }
@@ -136,13 +136,11 @@ namespace Lab6DB.ViewModel
 
                 foreach (PatternPropertyDB property in pattern.Properties.Values)
                 {
-                    BaseItem subitem = new BaseItem(property.Name);
-                    item.Children.Add(subitem);
-                    DataColumn column = new DataColumn(property.Name);
-                    table.Columns.Add(column);
-                    ItemTextBox itemColumn = new ItemTextBox(property.Name, property.Type);
-                    columns.Add(itemColumn);
+                    item.Children.Add(new BaseItem(property.Name));
+                    table.Columns.Add(new DataColumn(property.Name));
+                    columns.Add(new ItemTextBox(property.Name, property.Type, property.IsForeignKey));
                 }
+
                 TreeElement.Add(item);
                 ComboBoxElement.Add(pattern.Name);
                 elementDB = new ElementDB();
@@ -154,7 +152,6 @@ namespace Lab6DB.ViewModel
                 elementDB.Table = table;
                 ElementDBs.Add(elementDB);
                 CollectionTableElement.Add(table);
-
             }
         }
         private DataTable CreateRowTable(string nameObject, DataTable table)
@@ -168,7 +165,7 @@ namespace Lab6DB.ViewModel
                     {
                         DataRow row = table.NewRow();
                         int nuberCell = 0;
-                        foreach (string text in objectDB.PropertyDB.Values)
+                        foreach (string text in objectDB.Property.Values)
                         {
                             row[nuberCell] = text;
                             nuberCell++;
@@ -242,16 +239,20 @@ namespace Lab6DB.ViewModel
 
                     string folder = "";
                     if (result == DialogResult.OK)
-                    {
                         folder = dialog.SelectedPath;
+
+                    if (!string.IsNullOrEmpty(folder))
+                    {
+                        ViewModelCreateWindow vmCreateWindow = new ViewModelCreateWindow();
+                        CreateWindow createWindow = new CreateWindow();
+                        createWindow.DataContext = vmCreateWindow;
+                        vmCreateWindow.FullFolderPath = folder;
+                        vmCreateWindow.CreateWindow = createWindow;
+                        vmCreateWindow.CollectionNameTables = CreateCollectNameTables();
+                        vmCreateWindow.ElementDBs = ElementDBs;
+
+                        createWindow.Show();
                     }
-                    //File.Create(folder + "\\ok.txt");//CreateDirectory для папок
-                    ViewModelCreateWindow vmCreateWindow = new ViewModelCreateWindow();
-                    CreateWindow createWindow = new CreateWindow();
-                    createWindow.DataContext = vmCreateWindow;
-                    vmCreateWindow.FullFolderPath = folder;
-                    vmCreateWindow.CreateWindow = createWindow;
-                    createWindow.Show();
                 });
             }
         }
@@ -264,6 +265,7 @@ namespace Lab6DB.ViewModel
                     TreeElement.Clear();
                     CollectionTableElement.Clear();
                     ComboBoxElement.Clear();
+                    ElementDBs = new ObservableCollection<ElementDB>();
                     TableElement = new DataTable();
                 });
             }
@@ -291,6 +293,8 @@ namespace Lab6DB.ViewModel
                                 vmRewriteTable.OldColumns = RewriteFormatCollectionList(element.Columns);
                                 vmRewriteTable.NameColumns = CreateCollectionNameColumns(element);
                                 vmRewriteTable.Element = element;
+                                vmRewriteTable.CollectionNameTables = CreateCollectNameTables(namePattern);
+                                vmRewriteTable.ElementDBs = ElementDBs;
 
                                 rewriteTableWindow.Show();
                             }
@@ -302,27 +306,6 @@ namespace Lab6DB.ViewModel
                     }
                 });
             }
-        }
-
-        private ObservableCollection<ItemTextBox> RewriteFormatCollectionList(ObservableCollection<ItemTextBox> items)
-        {
-            ObservableCollection<ItemTextBox> copyCollection = new ObservableCollection<ItemTextBox>();
-            foreach (ItemTextBox item in items) 
-            {
-                ItemTextBox copyItem = new ItemTextBox(item.Name, item.SelectedElementComboBoxType);
-                copyCollection.Add(copyItem);
-            }
-            return copyCollection;
-        }
-
-        private ObservableCollection<string> CreateCollectionNameColumns(ElementDB element)
-        { 
-            ObservableCollection<string> names = new ObservableCollection<string>();
-            foreach(ItemTextBox item in element.Columns)
-            {
-                names.Add(item.Name);
-            }
-            return names;
         }
         public ICommand RewriteData
         {
@@ -352,6 +335,7 @@ namespace Lab6DB.ViewModel
                 });
             }
         }
+
         private ObservableCollection<string> CreateCollectionDelete(ElementDB element)
         {
             ObservableCollection<string> collect = new ObservableCollection<string>();
@@ -360,6 +344,35 @@ namespace Lab6DB.ViewModel
                 collect.Add(row[0].ToString());
             }
             return collect;
+        }
+        private ObservableCollection<ItemTextBox> RewriteFormatCollectionList(ObservableCollection<ItemTextBox> items)
+        {
+            ObservableCollection<ItemTextBox> copyCollection = new ObservableCollection<ItemTextBox>();
+            foreach (ItemTextBox item in items)
+            {
+                ItemTextBox copyItem = new ItemTextBox(item.Name, item.SelectedElementComboBoxType, item.IsForeignKey);
+                copyCollection.Add(copyItem);
+            }
+            return copyCollection;
+        }
+        private ObservableCollection<string> CreateCollectionNameColumns(ElementDB element)
+        {
+            ObservableCollection<string> names = new ObservableCollection<string>();
+            foreach (ItemTextBox item in element.Columns)
+            {
+                names.Add(item.Name);
+            }
+            return names;
+        }
+        private ObservableCollection<string> CreateCollectNameTables(string nameExclusionTable = "")
+        {
+            ObservableCollection<string> collection = new ObservableCollection<string>();
+            foreach(ElementDB element in ElementDBs)
+            {
+                if(element.Pattern.Name.CompareTo(nameExclusionTable) != 0)
+                    collection.Add(element.Pattern.Name);
+            }
+            return collection;
         }
     }
 }

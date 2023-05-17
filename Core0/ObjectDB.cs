@@ -9,7 +9,7 @@ namespace Core0
     public class ObjectDB
     {
         public string Name { get; private set; }
-        public Dictionary<string, string> PropertyDB { get; private set; }
+        public Dictionary<string, string> Property { get; private set; }
         public ObjectDB(PatternObjectDB patternObjectDB, string[] lineData)
         {
             Name = patternObjectDB.Name;
@@ -20,7 +20,7 @@ namespace Core0
                 propertyDB[prop.Name] = lineData[i];
                 i++;
             }
-            PropertyDB = propertyDB;
+            Property = propertyDB;
         }
     }
 }

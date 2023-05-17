@@ -18,13 +18,16 @@ namespace Lab6DB.ViewModel
     public class ViewModelCreateWindow: MyViewModel
     {
         public CreateWindow CreateWindow { get; set; }
+        public ObservableCollection<string> CollectionNameTables { get; set; }
+        public ObservableCollection<ElementDB> ElementDBs { get; set; }
 
         private string fullFolderPath = "";
         private string nameTable;
         private string numberColumns;
         private ObservableCollection<ItemTextBox> columns = new ObservableCollection<ItemTextBox>();
         private ObservableCollection<string> elementsComboBoxTypeColumn = new ObservableCollection<string>() {"Int","String","DateTime"};
-        private string state = "";
+        private string contentErrorWindow = CheckError.NotError;
+        
 
         public PatternObjectDB NewPattern = new PatternObjectDB();
 
@@ -74,15 +77,16 @@ namespace Lab6DB.ViewModel
                 OnPropertyChanged(nameof(ElementsComboBoxTypeColumn));
             }
         }
-        public string State
+        public string ContentErrorWindow
         {
-            get { return state; }
+            get { return contentErrorWindow; }
             set
             {
-                state = value;
-                OnPropertyChanged(nameof(State));
+                contentErrorWindow = value;
+                OnPropertyChanged(nameof(ContentErrorWindow));
             }
         }
+
 
         public ICommand CreateTextBoxes
         {
@@ -90,16 +94,16 @@ namespace Lab6DB.ViewModel
             {
                 return new CommandDelegate(parametr =>
                 {
-                    State = CheckError.ErrorEmptyString(NumberColumns);
-                    if (State.Contains(CheckError.NotError))
+                    ContentErrorWindow = CheckError.ErrorEmptyString(NumberColumns);
+                    if (ContentErrorWindow.Contains(CheckError.NotError))
                     {
-                        State = CheckError.InputErrorInt(NumberColumns);
-                        if (State.Contains(CheckError.NotError))
+                        ContentErrorWindow = CheckError.InputErrorInt(NumberColumns);
+                        if (ContentErrorWindow.Contains(CheckError.NotError))
                         {
                             int numberColumn = int.Parse(NumberColumns);
                             for (int i = 0; i < numberColumn; i++)
                             {
-                                Columns.Add(new ItemTextBox(""));
+                                Columns.Add(new ItemTextBox("", CollectionNameTables, CreateCollectColumnsTables()));
                             }
                         }
                     }
@@ -113,33 +117,51 @@ namespace Lab6DB.ViewModel
             {
                 return new CommandDelegate(parametr => 
                 {
-                    State = CheckError.ErrorEmptyString(NameTable);
-                    if (State.Contains(CheckError.NotError))
+                    ContentErrorWindow = CheckError.ErrorEmptyString(NameTable);
+                    if (ContentErrorWindow.Contains(CheckError.NotError))
                     {
                         DataTable newTable = new DataTable(NameTable);
                         Dictionary<string, PatternPropertyDB> props = new Dictionary<string, PatternPropertyDB>();
+                        int id = 1;
                         foreach (ItemTextBox contentColumn in Columns)
                         {
-                            State = CheckError.ErrorEmptyString(contentColumn.Name);
-                            if (State.Contains(CheckError.NotError))
+                            ContentErrorWindow = CheckError.ErrorEmptyString(contentColumn.Name);
+                            ContentErrorWindow = CheckError.ErrorTypeColumnIsForeignKey(contentColumn.Name, contentColumn.IsForeignKey, contentColumn.SelectedElementComboBoxType);
+                            if (ContentErrorWindow.CompareTo(CheckError.NotError) == 0)
                             {
                                 DataColumn column = new DataColumn(contentColumn.Name);
-                                props[contentColumn.Name] = new PatternPropertyDB(contentColumn.Name, contentColumn.SelectedElementComboBoxType);
+                                props[contentColumn.Name] = new PatternPropertyDB(id, contentColumn.Name, contentColumn.SelectedElementComboBoxType, contentColumn.IsForeignKey);
                                 newTable.Columns.Add(column);
                             }
                             else { break; }
+                            id++;
                         }
-                        if (State.Contains(CheckError.NotError))
+                        if (ContentErrorWindow.Contains(CheckError.NotError))
                         {
-                            NewPattern = new PatternObjectDB(NameTable, props);//а надо ли в виде свойства?
+                            NewPattern = new PatternObjectDB(NameTable, props);
                             string json = JsonSerializer.Serialize(NewPattern);
                             File.WriteAllText($"{FullFolderPath}\\{NameTable}.json", json);
-                            //State = $"Таблица <{NameTable}> сохранена!";
+                            CreateWindow.Close();
                         }
-                    }
-                    CreateWindow.Close();
+                    } 
                 });
             }
+        }
+
+        private Dictionary<string, ObservableCollection<string>> CreateCollectColumnsTables()
+        {
+            Dictionary<string, ObservableCollection<string>> dictionary = new Dictionary<string, ObservableCollection<string>>(); 
+            foreach(ElementDB element in ElementDBs)
+            {
+                ObservableCollection<string> collect = new ObservableCollection<string>();
+                foreach (string column in element.Pattern.Properties.Keys)
+                {
+                    collect.Add(column);
+                }
+                dictionary[element.Pattern.Name] = collect;
+            }
+
+            return dictionary;
         }
 
     }

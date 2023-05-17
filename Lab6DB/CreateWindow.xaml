@@ -37,11 +37,19 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
                                     <ColumnDefinition Width="100"/>
                                     <ColumnDefinition Width="100"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBox Grid.Column="0" Text="{Binding Name}"/>
-                                <ComboBox Grid.Column="2" ItemsSource="{Binding ElementsComboBoxTypeColumn}" SelectedItem="{Binding SelectedElementComboBoxType}"/>
+                                <CheckBox Grid.Column="1" IsChecked="{Binding IsForeignKey}"/>
+                                <ComboBox Grid.Column="2" ItemsSource="{Binding CollectionNameTables}" SelectedItem="{Binding SelectedNameTable}"/>
+                                <Button Grid.Column="3" Content="Выбрать" Command="{Binding SelectTable}"/>
+                                <ComboBox Grid.Column="4" ItemsSource="{Binding CollectionNameColumns}" SelectedItem="{Binding SelectedNameColumns}"/>
+                                <ComboBox Grid.Column="6" ItemsSource="{Binding ElementsComboBoxTypeColumn}" SelectedItem="{Binding SelectedElementComboBoxType}"/>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

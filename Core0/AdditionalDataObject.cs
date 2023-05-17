@@ -9,11 +9,11 @@ namespace Core0
     public class AdditionalDataObject
     {
         public string WayCSV { get; set; }
-        public ObjectDB[] DBObject { get; set; }
+        public ObjectDB[] Objects { get; set; }
         public AdditionalDataObject(string wayCSV, ObjectDB[] objectDB)
         {
             WayCSV = wayCSV;
-            DBObject = objectDB;
+            Objects = objectDB;
         }
         public AdditionalDataObject() { }
     }

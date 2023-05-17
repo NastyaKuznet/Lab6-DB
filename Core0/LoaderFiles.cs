@@ -10,25 +10,18 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using System.Text.Json;
 
+
 namespace Core0
 {
     public class LoaderFiles
     {
         public string State = CheckError.NotError;
-
-        private Dictionary<string, AdditionalDataPattern> patterns = new Dictionary<string, AdditionalDataPattern>();
-
-        public Dictionary<string, AdditionalDataPattern> Patterns { get { return patterns; } }
-
-        private Dictionary<string, AdditionalDataObject> objects = new Dictionary<string, AdditionalDataObject>();
-        public Dictionary<string, AdditionalDataObject> Objects { get { return objects; } }
-
+        public ObservableCollection<ElementDB> Elements = new ObservableCollection<ElementDB>();
 
         public LoaderFiles(string nameFolder)
         {
             SeparatePatternsObjects(nameFolder);
         }
-
         private void SeparatePatternsObjects(string nameFolder)
         {
             if (!string.IsNullOrEmpty(nameFolder))
@@ -44,58 +37,49 @@ namespace Core0
                         nameFilesObjects.Add(item.FullName);
                 }
 
-                СreatePatterns(nameFilesPatterns);
-                if (State.CompareTo(CheckError.NotError) == 0)
-                    ConnectTemplateObjectAndCreate(nameFilesObjects, nameFilesPatterns);
+                СreateElementDB(nameFilesPatterns, nameFilesObjects);
             }
         }
-
-        private void СreatePatterns(List<string> nameFilesPatterns)
+        private void СreateElementDB(List<string> nameFilesPatterns, List<string> nameFilesObjects)
         {
-            State = CheckError.IsNotHavePatterns(nameFilesPatterns);
-            if (State.CompareTo(CheckError.NotError) == 0)
+            if (IsHaveError(CheckError.ErrorNotHavePatterns(nameFilesPatterns)))
             {
-                Dictionary<string, AdditionalDataPattern> _patterns = new Dictionary<string, AdditionalDataPattern>();
-
                 foreach (string name in nameFilesPatterns)
                 {
+                    ElementDB element = new ElementDB();
+
                     string contentJsonFile = File.ReadAllText(name);
                     PatternObjectDB pattern = JsonSerializer.Deserialize<PatternObjectDB>(contentJsonFile);
-                    _patterns[pattern.Name] = new AdditionalDataPattern(name, pattern);
+
+                    element.FullPattern = new AdditionalDataPattern(name, pattern);
+                    element = ConnectTemplateObjectAndCreate(element, nameFilesPatterns, nameFilesObjects);
+                    Elements.Add(element);
                 }
-                patterns = _patterns;
             }
         }
-
-        private void ConnectTemplateObjectAndCreate(List<string> nameFilesObjects, List<string> nameFilePatterns)
+        private ElementDB ConnectTemplateObjectAndCreate(ElementDB element, List<string> nameFilePatterns, List<string> nameFilesObjects)
         {
-            State = CheckError.IsNotHavePattern(nameFilePatterns);
-            if (State.CompareTo(CheckError.NotError) == 0)
+            if (IsHaveError(CheckError.ErrorNotHavePatterns(nameFilePatterns)))
             {
-                Dictionary<string, AdditionalDataObject> _objects = new Dictionary<string, AdditionalDataObject>();
-
                 foreach (string name in nameFilesObjects)
                 {
                     int lastSymbol = name.LastIndexOf('\\') + 1;
                     string correctName = name.Substring(lastSymbol, name.LastIndexOf('.') - lastSymbol);
-                    if (patterns.ContainsKey(correctName))
+                    if(element.FullPattern.Pattern.Name.CompareTo(correctName) == 0)
                     {
-                        AdditionalDataObject addObjectDB = LoaderData.ReadObjectDB(name, patterns[correctName].Pattern);
-
+                        element.Data = LoaderData.ReadObjectDB(name, element.FullPattern.Pattern);
                         State = LoaderData.State;
-                        if (State.CompareTo(CheckError.NotError) != 0)
-                        {
-                            break;
-                        }
-                        _objects[correctName] = addObjectDB;
-                    }
-                    else
-                    {
-                        State = CheckError.MismatchPattensAndObjects;
+                        break;
                     }
                 }
-                objects = _objects;
             }
+            return element;
+        }
+        private bool IsHaveError(string state = null)
+        {
+            if (state != null)
+                State = state;
+            return State.CompareTo(CheckError.NotError) == 0;
         }
     }
 }

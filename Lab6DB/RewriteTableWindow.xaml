@@ -37,10 +37,12 @@
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
+                                    <ColumnDefinition/>
                                     <ColumnDefinition Width="100"/>
                                     <ColumnDefinition Width="100"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBox Grid.Column="0" Text="{Binding Name}"/>
+                                <CheckBox Grid.Column="1" IsChecked="{Binding IsForeignKey}"/>
                                 <ComboBox Grid.Column="2" ItemsSource="{Binding ElementsComboBoxTypeColumn}" SelectedItem="{Binding SelectedElementComboBoxType}"/>
                             </Grid>
                         </DataTemplate>

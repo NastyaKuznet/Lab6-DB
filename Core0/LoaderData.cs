@@ -34,7 +34,7 @@ namespace Core0
                     return additionalDataObject;
             }
             additionalDataObject.WayCSV = nameFile;
-            additionalDataObject.DBObject = objectDBs;
+            additionalDataObject.Objects = objectDBs;
             return additionalDataObject;
         }
     }

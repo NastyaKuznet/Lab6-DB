@@ -15,7 +15,7 @@ using static System.Windows.Forms.AxHost;
 namespace Lab6DB.ViewModel
 {
     public class ViewModelRewriteTableWindow: MyViewModel
-    {   
+    {
         private string nameTable;
         private ObservableCollection<ItemTextBox> columns = new ObservableCollection<ItemTextBox>();
         private string numberColumns = "";
@@ -23,9 +23,10 @@ namespace Lab6DB.ViewModel
         private string selectedColumn = "";
         private string сontentErrorWindow = CheckError.NotError;
 
-
         public ElementDB Element { get; set; }
+        public ObservableCollection<ElementDB> ElementDBs { get; set; }
         public ObservableCollection<ItemTextBox> OldColumns { get; set;}
+        public ObservableCollection<string> CollectionNameTables { get; set; }
 
         public string NameTable
         {
@@ -108,13 +109,27 @@ namespace Lab6DB.ViewModel
                             int numberColumn = int.Parse(NumberColumns);
                             for (int i = 0; i < numberColumn; i++)
                             {
-                                Columns.Add(new ItemTextBox(""));
+                                Columns.Add(new ItemTextBox("", CollectionNameTables, CreateCollectColumnsTables()));
                                 NameColumns.Add("");
                             }
                         }
                     }
                 });
             }
+        }
+        private Dictionary<string, ObservableCollection<string>> CreateCollectColumnsTables()
+        {
+            Dictionary<string, ObservableCollection<string>> dictionary = new Dictionary<string, ObservableCollection<string>>();
+            foreach (ElementDB element in ElementDBs)
+            {
+                ObservableCollection<string> collect = new ObservableCollection<string>();
+                foreach (string column in element.Pattern.Properties.Keys)
+                {
+                    collect.Add(column);
+                }
+                dictionary[element.Pattern.Name] = collect;
+            }
+            return dictionary;
         }
         private Dictionary<string, PatternPropertyDB> newProp = new Dictionary<string, PatternPropertyDB>();
         public ICommand RewriteColumnTable
@@ -138,9 +153,14 @@ namespace Lab6DB.ViewModel
                             {
                                 for (int i = newProp.Count; i < Columns.Count; i++)
                                 {
-                                    newProp[Columns[i].Name] = new PatternPropertyDB(Columns[i].Name, Columns[i].SelectedElementComboBoxType);
-                                    rewriteTable.Columns.Add(new DataColumn(Columns[i].Name));
-                                    NameColumns[i] = Columns[i].Name;
+                                    ContentErrorWindow = CheckError.ErrorTypeColumnIsForeignKey(Columns[i].Name,Columns[i].IsForeignKey, Columns[i].SelectedElementComboBoxType);
+                                    if (ContentErrorWindow.CompareTo(CheckError.NotError) == 0)
+                                    {
+                                        newProp[Columns[i].Name] = new PatternPropertyDB(i, Columns[i].Name, Columns[i].SelectedElementComboBoxType, Columns[i].IsForeignKey);
+                                        rewriteTable.Columns.Add(new DataColumn(Columns[i].Name));
+                                        NameColumns[i] = Columns[i].Name;
+                                    }
+                                    else break;
                                 }
                             }
                         }
@@ -165,12 +185,17 @@ namespace Lab6DB.ViewModel
                 for (int i = 0; i < collection.Count; i++)
                 {
                     ItemTextBox itemColumn = Columns[i];
-                    newProp[collection[i].Name] = new PatternPropertyDB(itemColumn.Name, itemColumn.SelectedElementComboBoxType);
-                    NameColumns[i] = itemColumn.Name;
+                    ContentErrorWindow = CheckError.ErrorTypeColumnIsForeignKey(itemColumn.Name, itemColumn.IsForeignKey, itemColumn.SelectedElementComboBoxType);
+                    if (ContentErrorWindow.CompareTo(CheckError.NotError) == 0)
+                    {
+                        newProp[collection[i].Name] = new PatternPropertyDB(i + 1, itemColumn.Name, itemColumn.SelectedElementComboBoxType, itemColumn.IsForeignKey);
+                        NameColumns[i] = itemColumn.Name;
 
-                    Element.Columns[i] = itemColumn;
-                    DataColumn rewriteColumn = new DataColumn(itemColumn.Name);
-                    rewriteTable.Columns.Add(rewriteColumn);
+                        Element.Columns[i] = itemColumn;
+                        DataColumn rewriteColumn = new DataColumn(itemColumn.Name);
+                        rewriteTable.Columns.Add(rewriteColumn);
+                    }
+                    else break;
                 }
             }
             return rewriteTable;
